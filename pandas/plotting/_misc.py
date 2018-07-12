@@ -671,6 +671,8 @@ def xcorr_matrix(frame, figsize=None, ax=None, maxlags=10):
         for x, col2 in enumerate(df.columns):
             ax = axes[y, x]
 
+            ax.set_ylim((0, 1))
+
             ax.xcorr(df[col1], df[col2], maxlags=maxlags)
 
             ax.set_xlabel(col2)

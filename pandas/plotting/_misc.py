@@ -641,3 +641,44 @@ def autocorrelation_plot(series, ax=None, **kwds):
         ax.legend()
     ax.grid()
     return ax
+
+
+def xcorr_matrix(frame, figsize=None, ax=None, maxlags=10):
+    """
+    Draw a matrix of cross correlation plots.
+    Calls pyplot.axes.Axes.xcorr for all pairs of columns in frame.
+
+    Parameters
+    ----------
+    frame : DataFrame
+    figsize : (float,float), optional
+        a tuple (width, height) in inches
+    ax : Matplotlib axis object, optional
+    maxlags : Number of lags to show in each plot.
+        If None, will return all 2 * len(x) - 1 lags. Default is 10.
+
+    Examples
+    --------
+    >>> df = pd.DataFrame(np.random.randn(1000, 4), columns=['A','B','C','D'])
+    >>> xcorr_matrix(df)
+    """
+    df = frame.select_dtypes(np.number)
+    n = df.columns.size
+    naxes = n ** 2
+    fig, axes = _subplots(naxes=naxes, figsize=figsize, ax=ax, squeeze=False)
+
+    for y, col1 in enumerate(df.columns):
+        for x, col2 in enumerate(df.columns):
+            ax = axes[y, x]
+
+            ax.xcorr(df[col1], df[col2], maxlags=maxlags)
+
+            ax.set_xlabel(col2)
+            ax.set_ylabel(col1)
+
+            if x != 0:
+                ax.yaxis.set_visible(False)
+            if y != n - 1:
+                ax.xaxis.set_visible(False)
+
+    return axes
